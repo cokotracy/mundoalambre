@@ -22,3 +22,8 @@
 	path = ZOLVANT/account-financial-tools
 	url = git@github.com:ZOLVANT/account-financial-tools.git
 	branch = 13.0
+
+[submodule "ZOLVANT/argentina-sale"]
+	path = ZOLVANT/argentina-sale
+	url = git@github.com:ZOLVANT/argentina-sale.git
+	branch = 13.0
