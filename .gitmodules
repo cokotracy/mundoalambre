@@ -2,3 +2,8 @@
 	path = ZOLVANT/odoo-argentina
 	url = git@github.com:ZOLVANT/odoo-argentina.git
 	branch = 13.0
+
+[submodule "ZOLVANT/odoo-argentina-ee"]
+	path = ZOLVANT/odoo-argentina-ee
+	url = git@github.com:ZOLVANT/odoo-argentina-ee.git
+	branch = 13.0
