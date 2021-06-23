@@ -12,3 +12,8 @@
 	path = ZOLVANT/account-payment
 	url = git@github.com:ZOLVANT/account-payment.git
 	branch = 13.0
+
+[submodule "ZOLVANT/aeroo_reports"]
+	path = ZOLVANT/aeroo_reports
+	url = git@github.com:ZOLVANT/aeroo_reports.git
+	branch = 13.0
