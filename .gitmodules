@@ -7,3 +7,8 @@
 	path = ZOLVANT/odoo-argentina-ee
 	url = git@github.com:ZOLVANT/odoo-argentina-ee.git
 	branch = 13.0
+
+[submodule "ZOLVANT/account-payment"]
+	path = ZOLVANT/account-payment
+	url = git@github.com:ZOLVANT/account-payment.git
+	branch = 13.0
