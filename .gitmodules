@@ -27,3 +27,8 @@
 	path = ZOLVANT/argentina-sale
 	url = git@github.com:ZOLVANT/argentina-sale.git
 	branch = 13.0
+
+[submodule "ZOLVANT/payment_mercadopago"]
+	path = ZOLVANT/payment_mercadopago
+	url = git@github.com:ZOLVANT/payment_mercadopago.git
+	branch = 13.0
