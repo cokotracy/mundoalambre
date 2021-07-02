@@ -32,3 +32,8 @@
 	path = ZOLVANT/payment_mercadopago
 	url = git@github.com:ZOLVANT/payment_mercadopago.git
 	branch = 13.0
+
+[submodule "ZOLVANT/multi-company"]
+	path = ZOLVANT/multi-company
+	url = git@github.com:ZOLVANT/multi-company.git
+	branch = 13.0
