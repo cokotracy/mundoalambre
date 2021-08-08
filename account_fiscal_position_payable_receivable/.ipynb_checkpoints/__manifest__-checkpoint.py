@@ -22,5 +22,5 @@ This module has been written by Agustin Pianciola <agustin@zolvant.com>.
     'data': [
         'account_fiscal_position_view.xml',
     ],
-    'installable': False,
+    'installable': True,
 }
