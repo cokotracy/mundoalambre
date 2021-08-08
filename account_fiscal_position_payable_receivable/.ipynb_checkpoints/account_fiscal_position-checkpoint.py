@@ -14,7 +14,7 @@ class AccountFiscalPosition(models.Model):
     payable_account_id = fields.Many2one(
         'account.account', string='Partner Payable Account',
         company_dependent=True, domain=[('internal_type', '=', 'payable')])
-    x_studio_canal_2 = fields.Boolean()
+    x_studio_es_canal_2 = fields.Boolean()
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'

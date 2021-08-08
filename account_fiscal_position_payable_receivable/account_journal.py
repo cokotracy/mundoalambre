@@ -8,4 +8,4 @@ from odoo import fields, models, api, _
 class AccountJournal(models.Model):
 
     _inherit = 'account.journal'
-    x_studio_canal_2 = fields.Boolean()
+    x_studio_es_canal_2 = fields.Boolean()
