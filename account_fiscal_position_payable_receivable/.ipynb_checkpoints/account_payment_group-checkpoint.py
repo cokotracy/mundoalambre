@@ -17,9 +17,11 @@ class AccountPaymentGroup(models.Model):
     @api.onchange('x_studio_es_canal_2')
     def _inverse_to_pay_amount(self):
         if self.pop_up == False:
+            index = 1
             for rec in self:
-                rec.to_pay_move_line_ids = rec.env['account.move.line'].search(rec._get_to_pay_move_lines_domain())  
-
+                if index == 1:    
+                    rec.to_pay_move_line_ids = rec.env['account.move.line'].search(rec._get_to_pay_move_lines_domain())  
+            index += 1 
 
     def _get_to_pay_move_lines_domain(self):
         self.ensure_one()
