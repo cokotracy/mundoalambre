@@ -57,3 +57,25 @@ class AccountPaymentGroup(models.Model):
                 # ('amount_residual', '!=', False),
                 # ('amount_residual_currency', '!=', False),
             ]
+
+    def compute_withholdings(self):
+        if  self.x_studio_es_canal_2 == True:
+            raise ValidationError('No se puede calcular retenciones en Canal 2')
+        
+        index = 1
+        for rec in self.to_pay_move_line_ids:
+            if index == 1:
+                if rec.journal_id.x_studio_es_canal_2 == True:
+                    raise ValidationError('No se puede calcular retenciones en Canal 2')
+                                
+        for rec in self:
+            if rec.partner_type != 'supplier':
+                continue
+                # limpiamos el type por si se paga desde factura ya que el en ese
+                # caso viene in_invoice o out_invoice y en search de tax filtrar
+                # por impuestos de venta y compra (y no los nuestros de pagos
+                # y cobros)
+                self.env['account.tax'].with_context(type=None).search([
+                    ('type_tax_use', '=', rec.partner_type),
+                    ('company_id', '=', rec.company_id.id),
+                ]).create_payment_withholdings(rec)        
