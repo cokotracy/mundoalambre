@@ -3,7 +3,7 @@ from odoo.exceptions import UserError
     
 class AccountPaymentGroup(models.Model):
     _inherit = "account.payment.group"
-    x_studio_canal_2 = fields.Boolean()
+    x_studio_es_canal_2 = fields.Boolean()
 
     def _compute_canal(self):
             index = 1
