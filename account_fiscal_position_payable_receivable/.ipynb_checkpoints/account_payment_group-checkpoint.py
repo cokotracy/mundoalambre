@@ -1,6 +1,7 @@
 from odoo import _, api, models, fields
 from odoo.exceptions import UserError
-    
+from odoo.exceptions import ValidationError
+
 class AccountPaymentGroup(models.Model):
     _inherit = "account.payment.group"
     x_studio_es_canal_2 = fields.Boolean()
