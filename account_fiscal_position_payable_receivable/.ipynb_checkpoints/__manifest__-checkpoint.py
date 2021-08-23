@@ -18,7 +18,7 @@ This module has been written by Agustin Pianciola <agustin@zolvant.com>.
     """,
     'author': "ZOLVANT",
     'website': 'http://www.zolvant.com',
-    'depends': ['account', 'account_payment', 'account_payment_group'],
+    'depends': ['account', 'account_payment', 'account_payment_group', 'purchase', 'sale'],
     'data': [
         'account_fiscal_position_view.xml',
     ],
