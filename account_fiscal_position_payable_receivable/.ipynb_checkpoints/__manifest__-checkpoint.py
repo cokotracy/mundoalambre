@@ -21,6 +21,7 @@ This module has been written by Agustin Pianciola <agustin@zolvant.com>.
     'depends': ['account', 'account_payment', 'account_payment_group', 'purchase', 'sale'],
     'data': [
         'account_fiscal_position_view.xml',
+        'account_payment_group_view.xml',
     ],
     'installable': True,
 }

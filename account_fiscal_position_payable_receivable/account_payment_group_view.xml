@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_account_payment_group_form" model="ir.ui.view">
+        <field name="name">account.payment.group.inherit.view.canal</field>
+        <field name="model">account.payment.group</field>
+        <field name="inherit_id" ref="account_payment_group.view_account_payment_group_form"/>
+        <field name="arch" type="xml">
+           
+                <field name="company_id" position="after">
+                    <field name="x_studio_es_canal_2" string="Es canal 2"/>
+                </field>
+            
+                     <form>
+                                              
+                        <field name="to_pay_move_line_ids" context="{'tree_view_ref': 'account_payment_group.view_move_line_tree'}" domain="[('partner_id.commercial_partner_id', '=', commercial_partner_id),('account_id.internal_type', '=', account_internal_type),('account_id.reconcile', '=', True),('reconciled', '=', True),('full_reconcile_id', '=', False),('company_id', '=', company_id), ('move_id.state', '=', 'posted'), ('move_id.journal_id.x_studio_es_canal_2','=',x_studio_es_canal_2)]"/>
+                   
+             </form> 
+             
+        </field>    
+    </record>
+</odoo>
