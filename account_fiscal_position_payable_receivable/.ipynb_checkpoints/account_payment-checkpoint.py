@@ -7,12 +7,7 @@ from odoo.exceptions import UserError
     
 class AccountPayment(models.Model):
     _inherit = "account.payment"
-    x_studio_es_canal_2 = fields.Boolean(string="Es canal 2")
-    
-    @api.onchange('x_studio_es_canal_2')
-    def _compute_domain_canal_2(self):
-        self.journal_ids = self.journal_ids.search(self.get_journals_domain())
-    
+ 
     
     
 
@@ -23,30 +18,24 @@ class AccountPayment(models.Model):
             domain.append(
                 ('company_id', '=', self.payment_group_company_id.id))
         #con las prox lineas comentadas funciona ok
-            if self.payment_group_id.to_pay_move_line_ids:
-                index = 1
-                for rec in self.payment_group_id.to_pay_move_line_ids:
-                    if index == 1:
-                        if rec.journal_id.x_studio_es_canal_2 == True:
-                            domain.append(('x_studio_es_canal_2', '=', True))    
-                        else:
+        if self.payment_group_id.to_pay_move_line_ids:
+            index = 1
+            for rec in self.payment_group_id.to_pay_move_line_ids:
+                if index == 1:
+                    if rec.journal_id.x_studio_es_canal_2 == True:
+                        domain.append(('x_studio_es_canal_2', '=', True))    
+                    else:
                             #if self.payment_group_id.to_pay_move_line_ids.journal_id.search([('x_studio_es_canal_2','=',False)], limit=1).x_studio_es_canal_2  == False:
-                            domain.append(('x_studio_es_canal_2', '=', False))    
-                        return domain
-                index += 1
-            else:
-                if self.payment_group_id.x_studio_es_canal_2 == True: 
-                    domain.append(('x_studio_es_canal_2', '=', True))
-                else:
-                    domain.append(('x_studio_es_canal_2', '=', False)) 
-                return domain
+                        domain.append(('x_studio_es_canal_2', '=', False))    
+                    return domain
+            index += 1
         else:
-            #domain.append(('company_id', '=', 1))
-            if self.x_studio_es_canal_2 == True: 
+            if self.payment_group_id.x_studio_es_canal_2 == True: 
                 domain.append(('x_studio_es_canal_2', '=', True))
             else:
                 domain.append(('x_studio_es_canal_2', '=', False)) 
             return domain
+        
         
     
     def _compute_journal_domain_and_types(self):
