@@ -7,11 +7,11 @@ from odoo.exceptions import UserError
     
 class AccountPayment(models.Model):
     _inherit = "account.payment"
-    x_studio_es_canal_2 = fields.Boolean(string="Es canal 2")
+   # x_studio_es_canal_2 = fields.Boolean(string="Es canal 2")
     
-    @api.onchange('x_studio_es_canal_2')
-    def _compute_domain_canal_2(self):
-        self.journal_ids = self.journal_ids.search(self.get_journals_domain())
+   # @api.onchange('x_studio_es_canal_2')
+   # def _compute_domain_canal_2(self):
+   #     self.journal_ids = self.journal_ids.search(self.get_journals_domain())
     
     
     
@@ -40,13 +40,14 @@ class AccountPayment(models.Model):
                 else:
                     domain.append(('x_studio_es_canal_2', '=', False)) 
                 return domain
-        else:
+        
+        #else:
             #domain.append(('company_id', '=', 1))
-            if self.x_studio_es_canal_2 == True: 
-                domain.append(('x_studio_es_canal_2', '=', True))
-            else:
-                domain.append(('x_studio_es_canal_2', '=', False)) 
-            return domain
+        #    if self.x_studio_es_canal_2 == True: 
+        #        domain.append(('x_studio_es_canal_2', '=', True))
+        #    else:
+        #        domain.append(('x_studio_es_canal_2', '=', False)) 
+        #    return domain
         
     
     def _compute_journal_domain_and_types(self):
