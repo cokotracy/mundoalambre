@@ -8,3 +8,5 @@ from . import account_journal
 from . import res_company
 from . import sale
 from . import purchase
+from . import account_invoice
+from . import stock_rule
