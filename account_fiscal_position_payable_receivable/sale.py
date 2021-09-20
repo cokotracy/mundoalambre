@@ -3,7 +3,7 @@ from functools import partial
 from itertools import groupby
 
 from odoo import api, fields, models, SUPERUSER_ID, _
-from odoo.exceptions import AccessError, UserError, ValidationError
+from odoo.exceptions import AccessError, UserError, ValidationError, Warning
 from odoo.tools.misc import formatLang, get_lang
 from odoo.osv import expression
 from odoo.tools import float_is_zero, float_compare
@@ -14,7 +14,7 @@ from werkzeug.urls import url_encode
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
-    @api.model
+   # @api.model
     def _prepare_invoice(self):
         """
         Prepare the dict of values to create the new invoice for a sales order. This method may be
@@ -59,3 +59,21 @@ class SaleOrder(models.Model):
             'company_id': self.company_id.id,
         }
         return invoice_vals
+    
+    
+##agregado zolvant Actualizacion de precios al cambiar la lista de precios. 
+
+    @api.onchange('pricelist_id')
+    def change_price(self):
+        #raise Warning ("pasa por aca")
+        if not self.pricelist_id:
+            return
+        vals = {}
+        for line in self.order_line:
+            vals.update(name=line.get_sale_order_line_multiline_description_sale(line.product_id))
+
+            line._compute_tax_id()
+
+            if line.order_id.pricelist_id and line.order_id.partner_id:
+                vals['price_unit'] = line.env['account.tax']._fix_tax_included_price_company(line._get_display_price(line.product_id), line.product_id.taxes_id, line.tax_id, line.company_id)
+            line.update(vals)

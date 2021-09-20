@@ -31,6 +31,7 @@ class AccountMove(models.Model):
 
     def _recompute_payment_terms_lines(self):
         ''' Compute the dynamic payment term lines of the journal entry.'''
+        #raise Warning ("Se actualizara el calculo impositivo segun la posicion fiscal")
         self.ensure_one()
         in_draft_mode = self != self._origin
         today = fields.Date.context_today(self)
@@ -49,21 +50,29 @@ class AccountMove(models.Model):
 
 
         def _get_payment_terms_account(self, payment_terms_lines):
+                        
                         ''' Get the account from invoice that will be set as receivable / payable account.
                         :param self:                    The current account.move record.
                         :param payment_terms_lines:     The current payment terms lines.
                         :return:                        An account.account record.
                         '''
+                        #si raise Warning ("Se actualizara el calculo impositivo segun la posicion fiscal")
                         if self.fiscal_position_id:
-                            if payment_terms_lines:
-                                                    # Retrieve account from previous payment terms lines in order to allow the user to set a custom one.
-                                return payment_terms_lines[0].account_id
-                            elif self.partner_id:
+                            #si raise Warning ("Se actualizara el calculo impositivo segun la posicion fiscal")
+                            #zolvant
+                            #if payment_terms_lines:
+                                #raise Warning ("Se actualizara el calculo impositivo segun la posicion fiscal")                     # Retrieve account from previous payment terms lines in order to allow the user to set a custom one.
+                             #   return payment_terms_lines[0].account_id
+                            if self.partner_id:
                                                     # Retrieve account from partner.
+                                #si raise Warning ("Se actualizara el calculo impositivo segun la posicion fiscal")
                                 if self.is_sale_document(include_receipts=True):
+                                    #siraise Warning (self.fiscal_position_id.receivable_account_id.name)
                                     return self.fiscal_position_id.receivable_account_id
+                                    
                                 else:
                                     return self.fiscal_position_id.payable_account_id
+                            #raise Warning ("Se actualizara el calculo impositivo segun la posicion fiscal")
                             else:
                                                     # Search new account.
                                 domain = [
@@ -72,6 +81,7 @@ class AccountMove(models.Model):
                                 ]
                                 return self.env['account.account'].search(domain, limit=1)
                         else:
+                            #raise Warning ("Se actualizara el calculo impositivo segun la posicion fiscal")
                             if payment_terms_lines:
                                                     # Retrieve account from previous payment terms lines in order to allow the user to set a custom one.
                                 return payment_terms_lines[0].account_id
@@ -88,6 +98,7 @@ class AccountMove(models.Model):
                                         ('internal_type', '=', 'receivable' if self.type in ('out_invoice', 'out_refund', 'out_receipt') else 'payable'),
                                 ]
                                 return self.env['account.account'].search(domain, limit=1)
+        
         def _compute_payment_terms(self, date, total_balance, total_amount_currency):
             ''' Compute the payment terms.
             :param self:                    The current account.move record.
@@ -121,6 +132,8 @@ class AccountMove(models.Model):
 
             # Recompute amls: update existing line or create new one for each payment term.
             new_terms_lines = self.env['account.move.line']
+            
+            
             for date_maturity, balance, amount_currency in to_compute:
                 currency = self.journal_id.company_id.currency_id
                 if currency and currency.is_zero(balance) and len(to_compute) > 1:
@@ -128,14 +141,19 @@ class AccountMove(models.Model):
 
                 if existing_terms_lines_index < len(existing_terms_lines):
                     # Update existing line.
+                    
                     candidate = existing_terms_lines[existing_terms_lines_index]
                     existing_terms_lines_index += 1
                     candidate.update({
                         'date_maturity': date_maturity,
+                        #zolvant
+                        'account_id': account.id,
+                        #zvt
                         'amount_currency': -amount_currency,
                         'debit': balance < 0.0 and -balance or 0.0,
                         'credit': balance > 0.0 and balance or 0.0,
                     })
+                    
                 else:
                     # Create new line.
                     create_method = in_draft_mode and self.env['account.move.line'].new or self.env['account.move.line'].create
@@ -152,6 +170,7 @@ class AccountMove(models.Model):
                         'partner_id': self.commercial_partner_id.id,
                         'exclude_from_invoice_tab': True,
                     })
+                    
                 new_terms_lines += candidate
                 if in_draft_mode:
                     candidate._onchange_amount_currency()
@@ -170,87 +189,106 @@ class AccountMove(models.Model):
 
         computation_date = _get_payment_terms_computation_date(self)
         account = _get_payment_terms_account(self, existing_terms_lines)
+
+
+
         to_compute = _compute_payment_terms(self, computation_date, total_balance, total_amount_currency)
         new_terms_lines = _compute_diff_payment_terms_lines(self, existing_terms_lines, account, to_compute)
 
+
         # Remove old terms lines that are no longer needed.
         self.line_ids -= existing_terms_lines - new_terms_lines
-
+        #
         if new_terms_lines:
+
             self.invoice_payment_ref = new_terms_lines[-1].name or ''
             self.invoice_date_due = new_terms_lines[-1].date_maturity
-            
 
-            
-    def _get_computed_price_unit(self):
-        ''' Helper to get the default price unit based on the product by taking care of the taxes
-        set on the product and the fiscal position.
-        :return: The price unit.
-        '''
+
+#####################################
+###UPDATE
+
+    @api.onchange("partner_id")
+    def _onchange_partner_id(self):
+        fiscal_position = self.fiscal_position_id
+        res = super()._onchange_partner_id()
+        if fiscal_position != self.fiscal_position_id:
+            self.fiscal_position_change()
+        return res
+
+    @api.onchange("fiscal_position_id")
+    def fiscal_position_change(self):
+        #raise Warning ("Ejecuta")
+        """Updates taxes and accounts on all invoice lines"""
         self.ensure_one()
-
-        if not self.product_id:
-            return 0.0
-
-        company = self.move_id.company_id
-        currency = self.move_id.currency_id
-        company_currency = company.currency_id
-        product_uom = self.product_id.uom_id
-        fiscal_position = self.move_id.fiscal_position_id
-        is_refund_document = self.move_id.type in ('out_refund', 'in_refund')
-        move_date = self.move_id.date or fields.Date.context_today(self)
-
-        if self.move_id.is_sale_document(include_receipts=True):
-            product_price_unit = self.product_id.lst_price
-            product_taxes = self.product_id.taxes_id
-        elif self.move_id.is_purchase_document(include_receipts=True):
-            product_price_unit = self.product_id.standard_price
-            product_taxes = self.product_id.supplier_taxes_id
-        else:
-            return 0.0
-        product_taxes = product_taxes.filtered(lambda tax: tax.company_id == company)
-
-        # Apply unit of measure.
-        if self.product_uom_id and self.product_uom_id != product_uom:
-            product_price_unit = product_uom._compute_price(product_price_unit, self.product_uom_id)
-
-        # Apply fiscal position.
-        if product_taxes and fiscal_position:
-            product_taxes_after_fp = fiscal_position.map_tax(product_taxes, partner=self.partner_id)
-
-            if set(product_taxes.ids) != set(product_taxes_after_fp.ids):
-                flattened_taxes_before_fp = product_taxes._origin.flatten_taxes_hierarchy()
-                if any(tax.price_include for tax in flattened_taxes_before_fp):
-                    taxes_res = flattened_taxes_before_fp.compute_all(
-                        product_price_unit,
-                        quantity=1.0,
-                        currency=company_currency,
-                        product=self.product_id,
-                        partner=self.partner_id,
-                        is_refund=is_refund_document,
+        res = {}
+        lines_without_product = []
+        fp = self.fiscal_position_id
+        inv_type = self.type
+        invoice_lines = self.invoice_line_ids.filtered(lambda l: not l.display_type)
+        for line in invoice_lines:
+            if line.product_id:
+                account = line._get_computed_account()
+                product = line.with_context(force_company=self.company_id.id).product_id
+                if inv_type in ("out_invoice", "out_refund"):
+                    # M2M fields don't have an option 'company_dependent=True'
+                    # so we need per-company post-filtering
+                    taxes = product.taxes_id.filtered(
+                        lambda tax: tax.company_id == self.company_id
                     )
-                    product_price_unit = company_currency.round(taxes_res['total_excluded'])
-
-                flattened_taxes_after_fp = product_taxes_after_fp._origin.flatten_taxes_hierarchy()
-                if any(tax.price_include for tax in flattened_taxes_after_fp):
-                    taxes_res = flattened_taxes_after_fp.compute_all(
-                        product_price_unit,
-                        quantity=1.0,
-                        currency=company_currency,
-                        product=self.product_id,
-                        partner=self.partner_id,
-                        is_refund=is_refund_document,
-                        handle_price_include=False,
+                else:
+                    taxes = product.supplier_taxes_id.filtered(
+                        lambda tax: tax.company_id == self.company_id
                     )
-                    for tax_res in taxes_res['taxes']:
-                        tax = self.env['account.tax'].browse(tax_res['id'])
-                        if not tax.price_include:
-                            product_price_unit -= tax_res['amount']
+                taxes = taxes or account.tax_ids.filtered(
+                    lambda tax: tax.company_id == self.company_id
+                )
+                if fp:
+                    taxes = fp.map_tax(taxes)
+                line.recompute_tax_line = True
+                line.tax_ids = [(6, 0, taxes.ids)]
+                
+                line.account_id = account.id
+                #
+                #line.name = line._get_computed_name()
+                #line.account_id = line._get_computed_account()
+                #raise Warning ("por aca dentro del if1")
+                #line.price_unit = line._get_computed_price_unit()
+                #raise Warning (line.price_unit)
+                taxes = line._get_computed_taxes()
+                if taxes and line.move_id.fiscal_position_id:
+                    taxes = line.move_id.fiscal_position_id.map_tax(taxes, partner=line.partner_id)
+                line.tax_ids = taxes
+                line.price_unit = line._get_computed_price_unit()
+                line.product_uom_id = line._get_computed_uom()
+                line._onchange_price_subtotal()
+                
+            else:
+                lines_without_product.append(line.name)
+        #raise Warning ("Ejecuta")
+        
+        #raise Warning ("Ejecuta")
+        
+        self._recompute_dynamic_lines( recompute_tax_base_amount=True, recompute_all_taxes=True) #
+        #recompute_all_taxes=True,
+        self._recompute_payment_terms_lines()
+        if lines_without_product:
+            res["warning"] = {"title": _("Warning")}
+            if len(lines_without_product) == len(invoice_lines):
+                res["warning"]["message"] = _(
+                    "The invoice lines were not updated to the new "
+                    "Fiscal Position because they don't have products. "
+                    "You should update the Account and the Taxes of each "
+                    "invoice line manually."
+                )
+            else:
+                res["warning"]["message"] = _(
+                    "The following invoice lines were not updated "
+                    "to the new Fiscal Position because they don't have a "
+                    "Product: - %s You should update the Account and the "
+                    "Taxes of these invoice lines manually."
+                ) % ("- ".join(lines_without_product))
+        return res
 
-        # Apply currency rate.
-        if currency and currency != company_currency:
-            product_price_unit = company_currency._convert(product_price_unit, currency, company, move_date)
-
-        return product_price_unit
-
-            
+    
+    
