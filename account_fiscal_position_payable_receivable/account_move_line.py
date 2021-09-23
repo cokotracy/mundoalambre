@@ -23,9 +23,13 @@ class AccountMoveLine(models.Model):
         fiscal_position = self.move_id.fiscal_position_id
         is_refund_document = self.move_id.type in ('out_refund', 'in_refund')
         move_date = self.move_id.date or fields.Date.context_today(self)
-
-        if self.move_id.is_sale_document(include_receipts=True):
+        product_price_unit=self.price_unit
+        
+        if self.move_id.is_sale_document(include_receipts=True) and self.price_unit==0:
             product_price_unit = self.product_id.lst_price
+            product_taxes = self.product_id.taxes_id
+        elif self.move_id.is_sale_document(include_receipts=True) and self.price_unit!=0:
+            #product_price_unit=self.price_unit
             product_taxes = self.product_id.taxes_id
         elif self.move_id.is_purchase_document(include_receipts=True):
             product_price_unit = self.product_id.standard_price
