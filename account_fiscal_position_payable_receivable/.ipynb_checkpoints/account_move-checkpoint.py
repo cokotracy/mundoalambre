@@ -25,7 +25,7 @@ class AccountMove(models.Model):
             self.partner_id.id, delivery_id=self.partner_id)
             self.fiscal_position_id = self.env['account.fiscal.position'].browse(new_fiscal_position_id)
             self.fiscal_position_change()
-            
+        self.fiscal_position_change()    
         return {"domain": {"fiscal_position_id": domain}}   
 
 
@@ -215,7 +215,8 @@ class AccountMove(models.Model):
         if fiscal_position != self.fiscal_position_id:
             self.fiscal_position_change()
         return res
-
+       
+        
     @api.onchange("fiscal_position_id")
     def fiscal_position_change(self):
         #raise Warning ("Ejecuta")
