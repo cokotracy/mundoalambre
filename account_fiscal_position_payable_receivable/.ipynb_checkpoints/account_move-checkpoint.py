@@ -7,9 +7,11 @@ class AccountMove(models.Model):
 ###agregado zolvant
     @api.onchange("journal_id")
     def _onchange_fiscal_position_allowed_journal(self):
+        
         self.ensure_one()
         self.fiscal_position_id=''
         if self.journal_id.x_studio_es_canal_2 == True:
+            
             domain = []
             domain.append(
                 ("x_studio_es_canal_2", "=", True)
@@ -24,6 +26,9 @@ class AccountMove(models.Model):
             new_fiscal_position_id = self.env['account.fiscal.position'].with_context(force_company=self.company_id.id).get_fiscal_position(
             self.partner_id.id, delivery_id=self.partner_id)
             self.fiscal_position_id = self.env['account.fiscal.position'].browse(new_fiscal_position_id)
+            #zolvant
+            #self.fiscal_position_id=self.env['account.fiscal.position'].search(domain, limit=1)
+            
             self.fiscal_position_change()
         self.fiscal_position_change()    
         return {"domain": {"fiscal_position_id": domain}}   
@@ -219,7 +224,7 @@ class AccountMove(models.Model):
         
     @api.onchange("fiscal_position_id")
     def fiscal_position_change(self):
-        #raise Warning ("Ejecuta")
+        #raise Warning ("Ejecuta fpos")
         """Updates taxes and accounts on all invoice lines"""
         self.ensure_one()
         res = {}
@@ -273,23 +278,24 @@ class AccountMove(models.Model):
         self._recompute_dynamic_lines( recompute_tax_base_amount=True, recompute_all_taxes=True) #
         #recompute_all_taxes=True,
         self._recompute_payment_terms_lines()
-     #   if lines_without_product:
-     #       res["warning"] = {"title": _("Warning")}
-      #      if len(lines_without_product) == len(invoice_lines):
-       #         res["warning"]["message"] = _(
-       #             "The invoice lines were not updated to the new "
-       #             "Fiscal Position because they don't have products. "
-       ##             "You should update the Account and the Taxes of each "
-       #             "invoice line manually."
-       #         )
-       #     else:
-       #         res["warning"]["message"] = _(
-       #             "The following invoice lines were not updated "
-       #             "to the new Fiscal Position because they don't have a "
-       #             "Product: - %s You should update the Account and the "
-       #             "Taxes of these invoice lines manually."
-       
-        #) % ("- ".join(lines_without_product))
+
+        
+        #if lines_without_product:
+         #   res["warning"] = {"title": _("Warning")}
+          #  if len(lines_without_product) == len(invoice_lines):
+           #     res["warning"]["message"] = _(
+            #        "The invoice lines were not updated to the new "
+             #       "Fiscal Position because they don't have products. "
+              #      "You should update the Account and the Taxes of each "
+               #     "invoice line manually."
+               # )
+            ##   res["warning"]["message"] = _(
+              #      "The following invoice lines were not updated "
+               #     "to the new Fiscal Position because they don't have a "
+                #    "Product: - %s You should update the Account and the "
+                 #   "Taxes of these invoice lines manually."
+                #) % ("- ".join(lines_without_product))
+
         #return res
 
     
