@@ -30,7 +30,7 @@ class AccountMove(models.Model):
             #self.fiscal_position_id=self.env['account.fiscal.position'].search(domain, limit=1)
             
             self.fiscal_position_change()
-            
+        self.fiscal_position_change()    
         return {"domain": {"fiscal_position_id": domain}}   
 
 
@@ -220,7 +220,8 @@ class AccountMove(models.Model):
         if fiscal_position != self.fiscal_position_id:
             self.fiscal_position_change()
         return res
-
+       
+        
     @api.onchange("fiscal_position_id")
     def fiscal_position_change(self):
         #raise Warning ("Ejecuta fpos")
@@ -277,6 +278,7 @@ class AccountMove(models.Model):
         self._recompute_dynamic_lines( recompute_tax_base_amount=True, recompute_all_taxes=True) #
         #recompute_all_taxes=True,
         self._recompute_payment_terms_lines()
+
         
         #if lines_without_product:
          #   res["warning"] = {"title": _("Warning")}
