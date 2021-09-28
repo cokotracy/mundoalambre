@@ -272,23 +272,24 @@ class AccountMove(models.Model):
         self._recompute_dynamic_lines( recompute_tax_base_amount=True, recompute_all_taxes=True) #
         #recompute_all_taxes=True,
         self._recompute_payment_terms_lines()
-        if lines_without_product:
-            res["warning"] = {"title": _("Warning")}
-            if len(lines_without_product) == len(invoice_lines):
-                res["warning"]["message"] = _(
-                    "The invoice lines were not updated to the new "
-                    "Fiscal Position because they don't have products. "
-                    "You should update the Account and the Taxes of each "
-                    "invoice line manually."
-                )
-            else:
-                res["warning"]["message"] = _(
-                    "The following invoice lines were not updated "
-                    "to the new Fiscal Position because they don't have a "
-                    "Product: - %s You should update the Account and the "
-                    "Taxes of these invoice lines manually."
-                ) % ("- ".join(lines_without_product))
-        return res
+     #   if lines_without_product:
+     #       res["warning"] = {"title": _("Warning")}
+      #      if len(lines_without_product) == len(invoice_lines):
+       #         res["warning"]["message"] = _(
+       #             "The invoice lines were not updated to the new "
+       #             "Fiscal Position because they don't have products. "
+       ##             "You should update the Account and the Taxes of each "
+       #             "invoice line manually."
+       #         )
+       #     else:
+       #         res["warning"]["message"] = _(
+       #             "The following invoice lines were not updated "
+       #             "to the new Fiscal Position because they don't have a "
+       #             "Product: - %s You should update the Account and the "
+       #             "Taxes of these invoice lines manually."
+       
+        #) % ("- ".join(lines_without_product))
+        #return res
 
     
     
