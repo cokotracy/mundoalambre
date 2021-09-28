@@ -31,7 +31,11 @@ class AccountMoveLine(models.Model):
         elif self.move_id.is_sale_document(include_receipts=True) and self.price_unit!=0:
             #product_price_unit=self.price_unit
             product_taxes = self.product_id.taxes_id
+
         elif self.move_id.is_purchase_document(include_receipts=True)and self.price_unit==0:
+=======
+        
+
             product_price_unit = self.product_id.standard_price
             product_taxes = self.product_id.supplier_taxes_id
         elif self.move_id.is_purchase_document(include_receipts=True)and self.price_unit!=0:
