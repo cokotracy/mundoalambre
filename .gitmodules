@@ -47,3 +47,8 @@
 	path = ingadhoc/stock
 	url = git@github.com:ingadhoc/stock.git
 	branch = 13.0
+
+[submodule "OCA/account-reconcile"]
+	path = OCA/account-reconcile
+	url = git@github.com:OCA/account-reconcile.git
+	branch = 13.0
