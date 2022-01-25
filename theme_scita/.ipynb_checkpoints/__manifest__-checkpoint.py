@@ -72,7 +72,7 @@ AMP Support
         'website_sale_wishlist',
         'hr',
         'website_blog',
-        'whatsapp_mail_messaging',
+        #'whatsapp_mail_messaging',
     ],
     'data': [
         'security/ir.model.access.csv',
