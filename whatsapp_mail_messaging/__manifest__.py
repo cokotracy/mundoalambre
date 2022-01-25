@@ -31,7 +31,7 @@
     'website': "https://www.cybrosys.com",
     'company': 'Cybrosys Techno Solutions',
     'maintainer': 'Cybrosys Techno Solutions',
-    'depends': ['sale', 'account', 'website','theme_scita'],
+    'depends': ['sale', 'account', 'website','theme_scita',],
     'data': [
         'views/assets.xml',
         'views/portal_whatsapp_view.xml',
