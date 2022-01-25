@@ -31,10 +31,13 @@
     'website': "https://www.cybrosys.com",
     'company': 'Cybrosys Techno Solutions',
     'maintainer': 'Cybrosys Techno Solutions',
+    
+    #'depends': [],
     'depends': ['sale', 'account', 'website',],
+    
     'data': [
         'views/assets.xml',
-        'views/portal_whatsapp_view.xml',
+        #'views/portal_whatsapp_view.xml',
         'views/sale_order_inherited.xml',
         'views/account_move_inherited.xml',
         'views/website_inherited.xml',

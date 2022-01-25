@@ -73,7 +73,7 @@ AMP Support
         'hr',
         'website_blog',
 
-        #'whatsapp_mail_messaging',
+        'whatsapp_mail_messaging',
 
     ],
     'data': [
