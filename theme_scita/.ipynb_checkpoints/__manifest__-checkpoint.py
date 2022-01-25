@@ -132,4 +132,5 @@ AMP Support
     'price': 149.00,
     'currency': 'EUR',
     'installable': True,
+    'auto_install': False,
 }
