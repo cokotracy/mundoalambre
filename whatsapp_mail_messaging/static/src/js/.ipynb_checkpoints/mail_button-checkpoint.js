@@ -1,17 +1,17 @@
-odoo.define('whatsapp_mail_messaging.whatsapp_icon', function(require) {
+odoo.define('global_mail_message.mail_button', function(require) {
     "use strict";
     var SystrayMenu = require('web.SystrayMenu');
     var Widget = require('web.Widget');
     var ActionMenu = Widget.extend({
-        template: 'whatsapp_mail_messaging.whatsapp_icon',
+        template: 'global_mail_message.mail_icon',
         events: {
-            'click .whatsapp_icon': 'onclick_whatsapp_icon',
+            'click .mail_icon': 'onclick_mail_icon',
         },
-        onclick_whatsapp_icon: function() {
+        onclick_mail_icon: function() {
             var self = this;
             self.do_action({
-                name: 'Compose Whatsapp Message',
-                res_model: 'whatsapp.message.wizard',
+                name: 'Compose Mail',
+                res_model: 'mail.compose.message',
                 views: [[false, 'form']],
                 type: 'ir.actions.act_window',
                 view_mode: 'form',
